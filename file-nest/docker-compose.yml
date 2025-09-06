@@ -1,9 +1,16 @@
 services:
+  file-nest-web:
+    image: file-nest-web:0.0.1
+    container_name: file-nest-web
+    ports:
+      - "8080:80"
+    networks:
+      - file-nest-network
+    restart: unless-stopped
+
   file-nest-server:
     image: file-nest-server:0.0.1
     container_name: file-nest-server
-    ports:
-      - "8080:8080"
     depends_on:
       file-nest-db:
         condition: service_healthy
