@@ -1,0 +1,52 @@
+services:
+  file-nest-server:
+    image: file-nest-server:0.0.1
+    container_name: file-nest-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      file-nest-db:
+        condition: service_healthy
+    networks:
+      - file-nest-network
+    healthcheck:
+      test: >
+        bash -c '
+          result=$(curl -s 'http://localhost:8080/healthcheck')
+          [ "$$result" = "success" ]
+        '
+      start_period: 5s
+      start_interval: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  file-nest-db:
+    image: mariadb:11.4
+    container_name: file-nest-db
+    environment:
+      MARIADB_USER: file_nest
+      MARIADB_PASSWORD: admin
+      MARIADB_DATABASE: file_nest
+      MARIADB_ROOT_PASSWORD: admin
+    networks:
+      - file-nest-network
+    healthcheck:
+      test: >
+        bash -c '
+          result=$(mariadb -N -u root -p$${MARIADB_ROOT_PASSWORD} -e "
+            SELECT COUNT(*) FROM information_schema.SCHEMATA
+            WHERE SCHEMA_NAME = \"$${MARIADB_DATABASE}\";
+          ");
+          [ "$$result" = "1" ]
+        '
+      start_period: 5s
+      start_interval: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+networks:
+  file-nest-network:
