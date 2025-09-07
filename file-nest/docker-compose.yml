@@ -2,6 +2,8 @@ services:
   file-nest-web:
     image: file-nest-web:0.0.1
     container_name: file-nest-web
+    env_file:
+      - .env
     ports:
       - "8080:80"
     networks:
@@ -11,6 +13,8 @@ services:
   file-nest-server:
     image: file-nest-server:0.0.1
     container_name: file-nest-server
+    env_file:
+      - .env
     depends_on:
       file-nest-db:
         condition: service_healthy
@@ -32,11 +36,15 @@ services:
   file-nest-db:
     image: mariadb:11.4
     container_name: file-nest-db
+    env_file:
+      - .env
     environment:
       MARIADB_USER: file_nest
       MARIADB_PASSWORD: admin
       MARIADB_DATABASE: file_nest
       MARIADB_ROOT_PASSWORD: admin
+    volumes:
+      - ${DB_DATA_DIR}:/var/lib/mysql:Z
     networks:
       - file-nest-network
     healthcheck:
