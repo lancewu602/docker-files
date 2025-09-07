@@ -1,6 +1,6 @@
 services:
   file-nest-web:
-    image: file-nest-web:0.0.1
+    image: lancewu602/file-nest-web:0.0.1
     container_name: file-nest-web
     env_file:
       - .env
@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
 
   file-nest-server:
-    image: file-nest-server:0.0.1
+    image: lancewu602/file-nest-server:0.0.1
     container_name: file-nest-server
     env_file:
       - .env
